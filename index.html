@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sport Calculator Pro</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Inter', sans-serif;
+        }
+        
+        .glass {
+            background: rgba(37,37,37);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(46, 46, 46, 0.2);
+        }
+        
+        .glass-input {
+            background: rgba(64,64,64);
+            backdrop-filter: blur(15px);
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .glass-input:focus {
+            background: rgba(25, 25, 25, 0.95);
+            border-color: rgba(99, 102, 241, 0.5);
+            box-shadow: 0 0 15px rgba(99, 102, 241, 0.2);
+        }
+        
+        /* Hide number input spin buttons */
+        input[type=number]::-webkit-outer-spin-button,
+        input[type=number]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        
+        input[type=number] {
+            -moz-appearance: textfield;
+        }
+        
+        .btn-gradient {
+            background: rgba(25, 25, 25, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-gradient:hover {
+            background: rgba(25, 25, 25, 1);
+            border-color: rgba(0, 0, 0, 0.5);
+        }
+        
+        .floating {
+            /* Animation removed */
+        }
+        
+        @keyframes float {
+            /* Animation removed */
+        }
+        
+        .pulse-ring {
+            /* Animation removed */
+        }
+        
+        @keyframes pulse-ring {
+            /* Animation removed */
+        }
+        
+        .number-input {
+            position: relative;
+        }
+        
+        .number-input::before {
+            content: attr(data-label);
+            position: absolute;
+            top: -8px;
+            left: 12px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.9);
+            background: rgba(25, 25, 25, 0.9);
+            border: 1px solid rgba(0, 0, 0, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            z-index: 10;
+        }
+        
+        .particle {
+            position: absolute;
+            width: 4px;
+            height: 4px;
+            background: rgba(99, 102, 241, 0.8);
+            border-radius: 50%;
+            animation: particle-float 4s linear infinite;
+        }
+        
+        @keyframes particle-float {
+            0% {
+                transform: translateY(100vh) rotate(0deg);
+                opacity: 0;
+            }
+            10% {
+                opacity: 1;
+            }
+            90% {
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(-100px) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        .result-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            animation: successPulse 2s ease-in-out;
+        }
+        
+        .result-warning {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            animation: warningShake 0.5s ease-in-out;
+        }
+        
+        @keyframes warningShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
+        }
+    </style>
+</head>
+<body class="min-h-screen text-gray-800 overflow-hidden relative" style="background: radial-gradient(circle, hsla(0, 0%, 100%, 1) 0%, hsla(213, 83%, 93%, 1) 100%);">
+    <!-- Animated Background Particles -->
+    <div id="particles"></div>
+    
+    <!-- Main Container -->
+    <div class="min-h-screen flex flex-col justify-center items-center p-4 relative z-10">
+        <!-- Header -->
+        <div class="text-center mb-8">
+            <h1 class="text-5xl font-bold bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-2">
+                ULTRYN Advanced Formula Pro
+            </h1>
+            <p class="text-gray-600 text-lg">The Best Ultryn Calculator Series</p>
+            <div class="w-24 h-1 bg-gradient-to-r from-blue-500 to-purple-500 mx-auto mt-4 rounded-full"></div>
+        </div>
+        
+        <!-- Calculator Card -->
+        <div class="glass rounded-lg p-8 w-full max-w-lg shadow-2xl relative border-2 border-gray-300">
+            <!-- Input Section -->
+            <div class="grid grid-cols-2 gap-4 mb-6">
+                <div class="" data-label="">
+                    <input id="num1" type="text" placeholder="Input Number 1" class="w-full p-4 rounded-md glass-input text-white text-center text-lg font-medium focus:outline-none">
+                </div>
+                <div class="" data-label="">
+                    <input id="num2" type="text" placeholder="Input Number 2" class="w-full p-4 rounded-md glass-input text-white text-center text-lg font-medium focus:outline-none">
+                </div>
+                <div class="" data-label="">
+                    <input id="num3" type="text" placeholder="Input Number 3" class="w-full p-4 rounded-md glass-input text-white text-center text-lg font-medium focus:outline-none">
+                </div>
+                <div class="" data-label="Number 4">
+                    <input id="num4" type="text" placeholder="Input Number 4" class="w-full p-4 rounded-md glass-input text-white text-center text-lg font-medium focus:outline-none">
+                </div>
+            </div>
+            
+            <!-- Target Input -->
+            <div class="mb-6">
+                <div class="" data-label="Target">
+                    <input id="target" type="text" placeholder="Target Number" class="w-full p-4 rounded-md glass-input text-white text-center text-xl font-semibold focus:outline-none">
+                </div>
+            </div>
+            
+            <!-- Calculate Button -->
+            <button id="calcBtn" class="w-full btn-gradient text-white py-4 rounded-md text-lg font-semibold shadow-lg">
+                <span id="btnText">🚀 Calculate</span>
+            </button>
+            
+            <!-- Loading Animation -->
+            <div id="loading" class="mt-6 text-center hidden">
+                <div class="inline-flex items-center space-x-2">
+                    <div class="w-3 h-3 bg-blue-500 rounded-full animate-bounce"></div>
+                    <div class="w-3 h-3 bg-purple-500 rounded-full animate-bounce" style="animation-delay: 0.1s"></div>
+                    <div class="w-3 h-3 bg-pink-500 rounded-full animate-bounce" style="animation-delay: 0.2s"></div>
+                </div>
+                <p class="text-gray-600 mt-2 animate-pulse">Processing...</p>
+            </div>
+            
+            <!-- Result Display -->
+            <div id="result" class="mt-6 p-4 rounded-md text-center font-medium hidden"></div>
+        </div>
+        
+        <!-- Footer -->
+        <div class="mt-8 text-center text-gray-600 text-sm">
+            <p class="mb-2">Made by Ultryn — Trust Me, I'm an Engineer !</p>
+            <div class="flex justify-center space-x-4">
+                <a href="https://github.com/ximxal" target="_blank" class="flex items-center space-x-1 hover:text-gray-800 transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    <span>GitHub</span>
+                </a>
+                <a href="https://www.instagram.com/ximxal/" target="_blank" class="flex items-center space-x-1 hover:text-gray-800 transition-colors">
+                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+                    </svg>
+                    <span>Instagram</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Number validation function
+        function validateNumberInput(input) {
+            let value = input.value;
+            // Remove any non-numeric characters except minus sign and decimal point
+            value = value.replace(/[^0-9.-]/g, '');
+            // Ensure only one decimal point
+            const parts = value.split('.');
+            if (parts.length > 2) {
+                value = parts[0] + '.' + parts.slice(1).join('');
+            }
+            // Ensure minus sign only at the beginning
+            if (value.indexOf('-') > 0) {
+                value = value.replace(/-/g, '');
+            }
+            input.value = value;
+        }
+
+        // Add input validation to all number inputs
+        document.querySelectorAll('#num1, #num2, #num3, #num4, #target').forEach(input => {
+            input.addEventListener('input', () => validateNumberInput(input));
+            input.addEventListener('paste', (e) => {
+                setTimeout(() => validateNumberInput(input), 0);
+            });
+        });
+
+        // Create floating particles
+        function createParticles() {
+            const particlesContainer = document.getElementById('particles');
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                particle.className = 'particle';
+                particle.style.left = Math.random() * 100 + '%';
+                particle.style.animationDelay = Math.random() * 4 + 's';
+                particle.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                particlesContainer.appendChild(particle);
+            }
+        }
+        
+        createParticles();
+
+        function safeFact(x) {
+            if (x < 0 || Math.floor(x) !== x || x > 6) return null;
+            let res = 1;
+            for (let i = 1; i <= x; i++) res *= i;
+            return res;
+        }
+
+        function allOps() {
+            return ['+', '-', '*', '/', '**'];
+        }
+
+        function generatePatterns(a, b, c, d, op1, op2, op3) {
+    return [
+        `( ${a} ${op1} ${b} ) ${op2} ${c} ${op3} ${d}`,
+        `( ${a} ${op1} ( ${b} ${op2} ${c} )) ${op3} ${d}`,
+        `${a} ${op1} (( ${b} ${op2} ${c} ) ${op3} ${d} )`,
+        `${a} ${op1} ( ${b} ${op2} ( ${c} ${op3} ${d} ))`,
+        `( ${a} ${op1} ${b} ) ${op2} ( ${c} ${op3} ${d} )`
+    ];
+}
+
+        async function calculate() {
+            const nums = [
+                parseInt(document.getElementById('num1').value) || 0,
+                parseInt(document.getElementById('num2').value) || 0,
+                parseInt(document.getElementById('num3').value) || 0,
+                parseInt(document.getElementById('num4').value) || 0
+            ];
+            const target = parseInt(document.getElementById('target').value) || 0;
+
+            const loadingDiv = document.getElementById('loading');
+            const resultDiv = document.getElementById('result');
+            const btnText = document.getElementById('btnText');
+            
+            // Show loading state
+            loadingDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
+            btnText.textContent = 'Calculating...';
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            let closestExpr = null;
+            let closestResult = null;
+            let smallestDiff = Infinity;
+
+            function permute(arr) {
+                if (arr.length <= 1) return [arr];
+                let result = [];
+                for (let i = 0; i < arr.length; i++) {
+                    let rest = [...arr.slice(0, i), ...arr.slice(i + 1)];
+                    for (let p of permute(rest)) {
+                        result.push([arr[i], ...p]);
+                    }
+                }
+                return result;
+            }
+
+            for (let numsPerm of permute(nums)) {
+                let aList = [numsPerm[0]];
+                let bList = [numsPerm[1]];
+                let cList = [numsPerm[2]];
+                let dList = [numsPerm[3]];
+
+                let fa = safeFact(numsPerm[0]);
+                let fb = safeFact(numsPerm[1]);
+                let fc = safeFact(numsPerm[2]);
+                let fd = safeFact(numsPerm[3]);
+
+                if (fa !== null) aList.push(fa);
+                if (fb !== null) bList.push(fb);
+                if (fc !== null) cList.push(fc);
+                if (fd !== null) dList.push(fd);
+
+                for (let a of aList)
+                for (let b of bList)
+                for (let c of cList)
+                for (let d of dList)
+                for (let op1 of allOps())
+                for (let op2 of allOps())
+                for (let op3 of allOps()) {
+                    for (let expr of generatePatterns(a, b, c, d, op1, op2, op3)) {
+                        try {
+                            let result = eval(expr);
+                            let diff = Math.abs(result - target);
+                            if (diff < 1e-6) {
+                                loadingDiv.classList.add('hidden');
+                                resultDiv.className = 'mt-6 p-4 rounded-xl text-center font-medium result-success text-white';
+                                resultDiv.innerHTML = `
+                                    <div class="text-2xl mb-2"></div>
+                                    <div class="text-lg font-bold">Found the answer !</div>
+                                    <div class="text-sm mt-2 bg-white bg-opacity-20 p-2 rounded-lg font-mono">${expr} = ${result}</div>
+                                `;
+                                resultDiv.classList.remove('hidden');
+                                btnText.textContent = 'Calculate';
+                                return;
+                            }
+                            if (diff < smallestDiff) {
+                                smallestDiff = diff;
+                                closestExpr = expr;
+                                closestResult = result;
+                            }
+                        } catch (e) {
+                            continue;
+                        }
+                    }
+                }
+            }
+
+            loadingDiv.classList.add('hidden');
+            if (closestExpr) {
+                resultDiv.className = 'mt-6 p-4 rounded-xl text-center font-medium result-warning text-white';
+                resultDiv.innerHTML = `
+                    <div class="text-2xl mb-2">⚠️</div>
+                    <div class="text-lg font-bold">Did not find the exact answer. ${target}</div>
+                    <div class="text-sm mt-2 text-gray-200">The closest result :</div>
+                    <div class="text-sm mt-1 bg-white bg-opacity-20 p-2 rounded-lg font-mono">${closestExpr} = ${closestResult.toFixed(2)}</div>
+                    <div class="text-xs mt-2 text-gray-300">Far from the target : ${smallestDiff.toFixed(2)}</div>
+                `;
+            } else {
+                resultDiv.className = 'mt-6 p-4 rounded-xl text-center font-medium bg-red-500 bg-opacity-80 text-white';
+                resultDiv.innerHTML = `
+                    <div class="text-2xl mb-2">❌</div>
+                    <div class="text-lg font-bold">No suitable calculation method found.</div>
+                    <div class="text-sm mt-2 text-gray-200">Try adjusting the numbers.</div>
+                `;
+            }
+            
+            resultDiv.classList.remove('hidden');
+            btnText.textContent = 'Calculate';
+        }
+
+        // Add input animation effects - removed scaling
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                // Removed transform scale animation
+            });
+            
+            input.addEventListener('blur', function() {
+                // Removed transform scale animation
+            });
+        });
+
+        document.getElementById('calcBtn').addEventListener('click', calculate);
+        
+        // Add Enter key support
+        document.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                calculate();
+            }
+        });
+    </script>
+</body>
+</html>
